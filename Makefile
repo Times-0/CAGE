@@ -3,7 +3,7 @@ CFLAGS	:= -std=c++17 -Wall -Wextra -g
 
 BIN		:= bin
 SRC		:= src
-INCLUDE	:= include $(src)
+INCLUDE	:= include
 LIB		:= lib
 
 LIBRARIES	:= 
@@ -21,6 +21,8 @@ LIBDIRS		:= $(shell find $(LIB) -type d)
 endif
 
 CINCLUDES	:= $(patsubst %,-I%, $(INCLUDEDIRS:%/=%))
+CINCLUDES	+= $(src)
+
 CLIBS		:= $(patsubst %,-L%, $(LIBDIRS:%/=%))
 
 SOURCESCPP		:= $(shell find $(SRC) -name "*.cpp")
