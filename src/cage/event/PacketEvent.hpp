@@ -9,17 +9,20 @@ namespace cage {
     namespace event {
 
         enum struct PacketType {
+            ANY = 0,
             XML, 
             XT, 
             JSON
         };
 
         class PacketEvent {
+        protected:
             std::string raw_data;
+            PacketType _type = PacketType::ANY;
 
         public:
 
-            PacketEvent (const std::string& data) : raw_data(data) {
+            PacketEvent (const std::string& data, PacketType type = PacketType::ANY) : raw_data(data), _type(type) {
                 
             }
 
@@ -29,6 +32,17 @@ namespace cage {
 
             virtual void parse() {
                 throw exceptions::NotImplementedError("PacketEvent::parse()");
+            }
+
+            virtual PacketType type() const {
+                return _type;
+            }
+        };
+
+        class PacketEventPolicies {
+
+            static PacketType getEvent(PacketEvent& event) {
+                return event.type();
             }
         };
 
