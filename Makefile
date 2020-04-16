@@ -21,7 +21,7 @@ LIBDIRS		:= $(shell find $(LIB) -type d)
 endif
 
 CINCLUDES	:= $(patsubst %,-I%, $(INCLUDEDIRS:%/=%))
-CINCLUDES	+= $(src)
+CINCLUDES	+= -I$(SRC)
 
 CLIBS		:= $(patsubst %,-L%, $(LIBDIRS:%/=%))
 
