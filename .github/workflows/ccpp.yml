@@ -13,8 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: configure
-      run: ./configure
+    - name: clean
+      run: make clean
     - name: make
       run: make
     - name: make check
