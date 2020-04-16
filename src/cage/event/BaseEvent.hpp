@@ -1,4 +1,5 @@
 #ifndef CAGE_EVENT_BASE_EVENT
+#define CAGE_EVENT_BASE_EVENT
 
 #include <string>
 
