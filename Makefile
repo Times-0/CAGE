@@ -3,7 +3,7 @@ CFLAGS	:= -std=c++17 -Wall -Wextra -g
 
 BIN		:= bin
 SRC		:= src
-INCLUDE	:= include
+INCLUDE	:= include $(src)
 LIB		:= lib
 
 LIBRARIES	:= 
@@ -23,14 +23,14 @@ endif
 CINCLUDES	:= $(patsubst %,-I%, $(INCLUDEDIRS:%/=%))
 CLIBS		:= $(patsubst %,-L%, $(LIBDIRS:%/=%))
 
-SOURCES		:= $(wildcard $(patsubst %,%/*.cpp, $(SOURCEDIRS)))
-SOURCES		+= $(wildcard $(patsubst %,%/*.hpp, $(SOURCEDIRS)))
+SOURCESCPP		:= $(shell find $(SRC) -name "*.cpp")
+SOURCESHPP		:= $(shell find $(SRC) -name "*.hpp")
 
-OBJECTS		:= $(SOURCES:.cpp=.o)
-OBJECTS		+= $(SOURCES:.hpp=.o)
+OBJECTS		:= $(SOURCESCPP:.cpp=.o)
+OBJECTS		+= $(SOURCESHPP:.hpp=.o)
 
-FILENAMES	:= $(SOURCES:.cpp=)
-FILENAMES	+= $(SOURCES:.hpp=)
+FILENAMESCPP	:= $(SOURCESCPP:.cpp=)
+FILENAMESHPP	:= $(SOURCESHPP:.hpp=)
 
 all: $(BIN)/$(EXECUTABLE)
 
@@ -47,8 +47,14 @@ run: all
 	$(CC) -c $(CFLAGS) $< -o $@
 
 $(BIN)/$(EXECUTABLE): 
-	for dir in $(FILENAMES); do \
+	for dir in $(FILENAMESCPP); do \
+		echo compile $$dir.cpp; \
 		$(CC) -c $(CINCLUDES) $(CLIBS) -o $$dir.o $$dir.cpp; \
+	done
+
+	for dir in $(FILENAMESHPP); do \
+		echo compile $$dir.hpp; \
+		$(CC) -c $(CINCLUDES) $(CLIBS) -o $$dir.o $$dir.hpp; \
 	done
 
 	$(CC) $(CFLAGS) $(CINCLUDES) $(CLIBS) $(SRC)/main.o -o $@ $(LIBRARIES)
