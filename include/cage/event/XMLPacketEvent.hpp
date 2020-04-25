@@ -11,33 +11,33 @@
 #include <cage/exception/XMLExceptions.hpp>
 
 namespace cage {
-    namespace event {
+namespace event {
 
-        class XMLPacketEvent : public PacketEvent{
-            
-        public:
-            std::string action;
-            pugi::xml_node body;
+    class XMLPacketEvent : public PacketEvent {
+        
+    public:
+        std::string action;
+        pugi::xml_node body;
 
-            XMLPacketEvent (const std::string &data) : PacketEvent(data, PacketType::XML) { }
+        XMLPacketEvent (const std::string &data) : PacketEvent(data, PacketType::XML) { }
 
-            void parse() override {
-                pugi::xml_document doc;
-                pugi::xml_parse_result result = doc.load_string(data().c_str());
+        void parse() override {
+            pugi::xml_document doc;
+            pugi::xml_parse_result result = doc.load_string(data().c_str());
 
-                if (!result) {
-                    throw exceptions::MalformedXMLError();
-                }
-
-                body = doc.child("msg").child("body");
-                if (!body || !body.attribute("action")) {
-                    throw exceptions::XMLParseError("element body or (and) attribute action not found.");
-                }
-
-                action = body.attribute("action").value();
+            if (!result) {
+                throw exceptions::MalformedXMLError();
             }
-        };
-    }    
+
+            body = doc.child("msg").child("body");
+            if (!body || !body.attribute("action")) {
+                throw exceptions::XMLParseError("element body or (and) attribute action not found.");
+            }
+
+            action = body.attribute("action").value();
+        }
+    };
+}    
 }
 
 #endif

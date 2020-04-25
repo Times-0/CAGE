@@ -3,77 +3,79 @@
 
 #include <iostream>
 #include <string>
+
 #include <cage/exception/StandardExceptions.hpp>
 
 namespace cage {
-    namespace event {
+namespace event {
 
-        enum struct PacketType {
-            ANY = 0,
-            XML, 
-            XT, 
-            JSON
-        };
+    enum struct PacketType {
+        ANY = 0,
+        XML, 
+        XT, 
+        JSON
+    };
+
+    /**
+     * @brief PacketEvent is fired when a packet of data is received.
+     *  It stores raw-data, and parses it, if possible.
+     * 
+     */
+    class PacketEvent {
+    protected:
+        std::string raw_data;
+        PacketType _type = PacketType::ANY;
+
+    public:
+        /**
+         * @brief Construct a new Packet Event object
+         * 
+         * @param data the raw-data packets
+         * @param type type of packet, eg: XT, XML, JSON
+         */
+        PacketEvent (const std::string& data, PacketType type = PacketType::ANY) : raw_data(data), _type(type) {
+            
+        }
 
         /**
-         * @brief PacketEvent is fired when a packet of data is received.
-         *  It stores raw-data, and parses it, if possible.
+         * @brief returns raw-data packets.
          * 
+         * @return std::string 
          */
-        class PacketEvent {
-        protected:
-            std::string raw_data;
-            PacketType _type = PacketType::ANY;
+        std::string data() const {
+            return raw_data;
+        }
 
-        public:
-            /**
-             * @brief Construct a new Packet Event object
-             * 
-             * @param data the raw-data packets
-             * @param type type of packet, eg: XT, XML, JSON
-             */
-            PacketEvent (const std::string& data, PacketType type = PacketType::ANY) : raw_data(data), _type(type) {
-                
-            }
+        virtual void parse() {
+            throw exceptions::NotImplementedError("PacketEvent::parse()");
+        }
 
-            /**
-             * @brief returns raw-data packets.
-             * 
-             * @return std::string 
-             */
-            std::string data() const {
-                return raw_data;
-            }
+        PacketType type() const {
+            return _type;
+        }
+    };
 
-            virtual void parse() {
-                throw exceptions::NotImplementedError("PacketEvent::parse()");
-            }
+    class PacketEventPolicies {
 
-            PacketType type() const {
-                return _type;
-            }
-        };
+        static PacketType getEvent(PacketEvent& event) {
+            return event.type();
+        }
+    };
 
-        class PacketEventPolicies {
+    class JSONPacketEvent : PacketEvent{
+    
+    public:
 
-            static PacketType getEvent(PacketEvent& event) {
-                return event.type();
-            }
-        };
+        JSONPacketEvent (const std::string &data) : PacketEvent(data, PacketType::JSON) { }
 
-        class JSONPacketEvent : PacketEvent{
+        void parse() override {
+            std::cout << "JSONPacket parse...";
+
+            throw exceptions::NotImplementedError("JSONParseEvent::parse()");
+        }
+    };
         
-        public:
-
-            JSONPacketEvent (const std::string &data) : PacketEvent(data, PacketType::JSON) { }
-
-            void parse() override {
-                std::cout << "JSONPacket parse...";
-
-                throw exceptions::NotImplementedError("JSONParseEvent::parse()");
-            }
-        };
-    }    
+}    
 }
 
 #endif
