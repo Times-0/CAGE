@@ -33,6 +33,12 @@ set(Sqlpp-connector-postgresql_LIBRARIES sqlpp11-connector-postgresql sqlpp11-co
 # spdlog Package
 find_package(spdlog REQUIRED)
 
+# glog Package
+find_package(glog REQUIRED)
+
+# evpp Package
+message(** "Make sure evpp is installed" **)
+
 ###################################
 # EXECUTABLE / LIBRARY
 
@@ -46,10 +52,10 @@ set(PUBLIC_INCLUDE "./include/")
 set(PRIVATE_SRC "./src/")
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${PUBLIC_INCLUDE})
-target_include_directories(${PROJECT_NAME} PRIVATE ${PRIVATE_SRC} ${PostgreSQL_INCLUDE_DIRS} ${Sqlpp11_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PRIVATE ${PRIVATE_SRC} ${PostgreSQL_INCLUDE_DIRS} ${Sqlpp11_INCLUDE_DIRS} ${glog_INCLUDE_DIRS})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${PostgreSQL_LIBRARIES} ${Sqlpp11_LIBRARIES} ${Sqlpp-connector-postgresql_LIBRARIES} spdlog)
-target_link_libraries(${PROJECT_NAME} PUBLIC pthread pq)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${PostgreSQL_LIBRARIES} ${Sqlpp11_LIBRARIES} ${Sqlpp-connector-postgresql_LIBRARIES} evpp_static)
+target_link_libraries(${PROJECT_NAME} PUBLIC pthread pq spdlog event_core glog::glog)
 
 ###################################
 
