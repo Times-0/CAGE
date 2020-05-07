@@ -15,7 +15,7 @@ namespace event {
     template <class T, class D>
     struct BaseEvent {
         T type;
-        D& data;
+        D data;
     };
 
     /**

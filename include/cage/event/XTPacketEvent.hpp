@@ -11,11 +11,12 @@ namespace cage {
 namespace event {
 
     enum struct XTPacketType {
+        LOGIN,
         PLAY,
         GAME
     };
 
-    class XTPacketEvent : public PacketEvent{
+    class XTPacketEvent : public PacketEvent {
     public:
         XTPacketType xt_type;
         std::string category, handler;
@@ -35,6 +36,9 @@ namespace event {
                 throw exceptions::XTParseError("no type specified");
             }
 
+            if (type == "l") {
+                xt_type = XTPacketType::LOGIN;
+            } else
             if (type == "s") {
                 xt_type = XTPacketType::PLAY;
             } else 
@@ -53,11 +57,10 @@ namespace event {
             category = type.substr(0, type.find("#"));    
             data.erase(0, category.size() + 1);
             handler = data.substr(0, data.find("%"));
-            if (handler.empty()) {
+            if (handler.empty() && category == "s") {
                 throw exceptions::XTParseError("no handler specified");
-            }
-
-            data.erase(0, handler.size() + 1);
+            } else 
+                data.erase(0, handler.size() + 1);
             roomId = std::atoi(data.substr(0, data.find("%")).c_str());
             if (roomId == 0) {
                 throw exceptions::XTParseError("invalid room id specified");
