@@ -49,6 +49,8 @@ namespace server {
                         conn->Close();
                         return;
                     }
+
+                    event::XMLEvent.enqueue(evnt);
                 } else 
                 if (packet[0] == '%') {
                     // xt packet (type=l for login)
@@ -64,6 +66,12 @@ namespace server {
                     if (evnt.xt_type != event::XTPacketType::LOGIN) {
                         conn->Close();
                         return;
+                    }
+                    
+                    if (eventpp::hasAnyListener(event::XTRoomEvent, evnt)) {
+                        event::XTRoomEvent.enqueue(evnt);
+                    } else {
+                        event::XTEvent.enqueue(evnt);
                     }
                 } else 
                 if (packet[0] == '{') {
@@ -81,6 +89,10 @@ namespace server {
                     return;
                 }
             }
+
+            event::XTEvent.process();
+            event::XTRoomEvent.process();
+            event::XMLEvent.process();
 
             SPDLOG_LOGGER_DEBUG(log, "Inside LoginServer hahah!");
         }
